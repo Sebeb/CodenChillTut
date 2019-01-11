@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class TruckDriver : MonoBehaviour
 {
+    // Which input is checked 
+    public int playerNumber = 1;
+    
     // We need to store references to the Unity components we want to access
     // Alternatively, we could make them public and set them within the inspector in Unity
     // 'private' states that this variable will not be accessible from other classes, and will not show in the Unity inspector
@@ -24,6 +27,10 @@ public class TruckDriver : MonoBehaviour
     public float motorTorque;
     public float jumpForce;
 
+    // The sprite renderer for our truck's body, so we can flip it.
+    // No need to set this as public, since we'll set it in our code in our Awake() method
+    private SpriteRenderer bodySprite;
+
     // This is called at the beginning of the game
     private void Awake()
     {
@@ -39,6 +46,9 @@ public class TruckDriver : MonoBehaviour
 
         // Get our RigidBody2D (2D physics controller)
         rigidbody2D = GetComponent<Rigidbody2D>();
+
+        // And our sprite renderer
+        bodySprite = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -51,10 +61,13 @@ public class TruckDriver : MonoBehaviour
     private void ManageInput()
     {
         // Set the maximum torque (power) of the motor to our motorTorque variable times the always positive (absolute) value of the horizontal input
-        jointMotor.maxMotorTorque = motorTorque * Mathf.Abs(Input.GetAxisRaw("Horizontal"));
+        jointMotor.maxMotorTorque = motorTorque * Mathf.Abs(Input.GetAxisRaw("Horizontal " + playerNumber));
 
         // Set the motor's speed to our horizontal input times our movement speed (and then reversed with -1)
-        jointMotor.motorSpeed = Input.GetAxis("Horizontal") * maxMovementSpeed * -1f;
+        jointMotor.motorSpeed = Input.GetAxis("Horizontal " + playerNumber) * maxMovementSpeed * -1f;
+
+        // Our truck's body is flipped, if it's
+        bodySprite.flipX = wheelJoints[1].jointSpeed > 0;
 
         // Assign this motor to our wheels' motors
         wheelJoints[0].motor = wheelJoints[1].motor = jointMotor;
