@@ -37,7 +37,7 @@ public class TruckLauncher : MonoBehaviour
 
         if (aimVector.magnitude < aimingDeadzone) return;
 
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, Vector2.SignedAngle(Vector2.up, aimVector) * -1));
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, Vector2.SignedAngle(Vector2.right, aimVector)));
     }
 
     private void Charge()
